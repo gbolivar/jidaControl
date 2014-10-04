@@ -1,4 +1,6 @@
-
+function jd (){
+ return true;   
+};
 /**
  * 
  *  jidaControl Controlador de mascara de campos
