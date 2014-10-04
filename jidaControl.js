@@ -8,7 +8,7 @@
  * @author : Julio Rodriguez <jirc48@gmail.com>
  * 
  * 
- * Requiere : Jquery 1.9+, jqueryui 1.10,
+ * Requiere : Jquery 1.9+, jqueryui 1.10, jd.ajax
  * 
  * @example: 
  * 
