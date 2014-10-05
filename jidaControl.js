@@ -187,12 +187,14 @@ jd.controladorInput.prototype={
                     contadorParaPunto=4;
                 }
                 //
+                $i=0;
                 while(numeroSinFormato.length>3){
-                        
+                        if($i>0) contadorParaPunto=3;
                         numeroFormateado=numeroSinFormato.substr(numeroSinFormato.length-contadorParaPunto) + numeroFormateado;
                         numeroSinFormato=numeroSinFormato.substring(0, numeroSinFormato.length - contadorParaPunto);
                         if(numeroSinFormato.length>0)
                             numeroFormateado = "."+numeroFormateado;
+                        $i++;
                         
                 }//fin while
                 numeroFormateado =  numeroSinFormato + numeroFormateado;
