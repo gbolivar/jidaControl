@@ -36,18 +36,12 @@ function replaceAll(value,charte){
 //========================================================
 (function($){
     
-    $.fn.jidaControl = function() {
+    $.fn.jidaControl = function(config) {
         elemento = this;
-        // $( "body" ).on('click','[data-jidacontrol]',function(){
-//         	
-//         	
-		// a = new jd.controladorInput( this );
-		//             
-// });
-		
+        
 	       elemento.each(function(){
 	       		if(!$(this).data('jidacontrolaply')){
-	       			new jd.controladorInput( this );
+	       			new jd.controladorInput( this,config );
 	       		}
 	       		
 	       	});
@@ -63,14 +57,19 @@ function replaceAll(value,charte){
  * Para manejo interno el constructor agrega un data "jidacontrolaply".
  * 
  */
-jd.controladorInput = function(control,elemento){
+jd.controladorInput = function(control,config){
     /**
      * Referencia al control sobre el cual se aplicará el
      * controlador de formato
      */
     
     this.control = control;
-    
+    configDefault = {separadorMiles:'.',separardorDecimales:','};
+    if(config){
+        this.config=$.extend(configDefault,config);
+    }else{
+        this.config=configDefault;
+    }
     /**
      * Objeto Jquery sobre el cual se aplica el controlador de formato.
      */
@@ -80,6 +79,7 @@ jd.controladorInput = function(control,elemento){
      * @var objeto
      */
     objeto = this;
+    
     this.validacion = this.controlObject.data('jidacontrol');
     
     this.inicializador();
@@ -149,6 +149,75 @@ jd.controladorInput.prototype={
      * @param : Rec
      */
     controladorDecimal:function(e){
+        
+        var key = e.which;
+        var tecla = String.fromCharCode(key);
+        var isCtrl = false;
+        var obj = $( this );
+        var decimal = obj.data('decimal');
+        var valorActualInput = obj.val();
+        var valorNuevoInput = valorActualInput+tecla;
+        var maxlength = obj.attr('maxlength');
+        var numeroFormateado = "";
+        var decimales = false;
+        
+        if(key==8 || key==9 || e.keyCode==9 || key==37 || key==38 || key==39 || key==40 || e.keyCode==222|| key==222 || 
+            e.keyCode==37 || e.keyCode==38 || e.keyCode==39 || e.keyCode==40 || e.keyCode==46) 
+            return true;
+        if(key==17) isCtrl=true;
+        if(isCtrl==true &&(key==37 || key==39 || key==46 || key==161 || key==225 || key==17 || key==18)){
+            e.preventDefault();
+    
+        }else{
+            var patron = e.data.validacion;
+            
+            numeroSinFormato=replaceAll(valorNuevoInput,'.');
+            
+            if(!patron.test(numeroSinFormato) || valorNuevoInput.length>maxlength){
+                
+                 e.preventDefault();
+            }else{
+                decimal = (typeof(decimal)=="undefined")?0:decimal;
+            
+                numeroFormateado = formatearValor();
+                obj.val(numeroFormateado);
+                obj.off('blur');
+                obj.on('blur',function(){
+                    valor = $( this).val();
+                    if(valor.substr(valor.length-1)==","){
+                        $(this ).val(valor.substr(0,valor.length-1));
+                    }
+                });
+                e.preventDefault(); 
+                    
+            }
+        }
+        function formatearValor(numeroSinFormato){
+            if(!numeroSinFormato)
+            contadorParaPunto=3;
+                if(numeroSinFormato.indexOf(",")>=0){    
+                    //eliminar coma de decimales si existe
+                    decimales = numeroSinFormato.substr(numeroSinFormato.indexOf(",")+1);
+                    numeroSinFormato=numeroSinFormato.substr(0,numeroSinFormato.indexOf(",")+1);
+                    contadorParaPunto=4;
+                }
+                //
+                while(numeroSinFormato.length>3){
+                        
+                        numeroFormateado=numeroSinFormato.substr(numeroSinFormato.length-contadorParaPunto) + numeroFormateado;
+                        numeroSinFormato=numeroSinFormato.substring(0, numeroSinFormato.length - contadorParaPunto);
+                        if(numeroSinFormato.length>0)
+                            numeroFormateado = "."+numeroFormateado;
+                        
+                }//fin while
+                numeroFormateado =  numeroSinFormato + numeroFormateado;
+                if(decimales){
+                    numeroFormateado +=decimales;
+                }
+        }
+    },
+    
+    controladorDecimalOld:function(e){
         
         tecla = String.fromCharCode(e.which);
         key = e.which;
@@ -243,10 +312,7 @@ jd.controladorInput.prototype={
             if(!patron.test(tecla)){
                 e.preventDefault();
             }else{
-                decimal = $(this).data('decimal');
-                if(decimal){
-                    
-                }
+                
             }//fin if validacion cadena
         }
         return this;
@@ -361,7 +427,7 @@ jd.controladorInput.prototype={
         rifConFormato :  {cadena : /^([V|E|G|J|P|N]\-{1}\d{8}-{1}\d{1})*$/,tipo:0},
         rif:{cadena:/^([V|v|E|e|G|g|J|j|P|p|N|n]\d{9})*$/,tipo:0},
         telefono: {cadena : /^(\d{11})*$/,tipo:1},
-        miles : {cadena:/^[0-9]*$/,tipo:2},
+        miles : {cadena:/^[0-9]+,{0,1}[0-9]*$/,tipo:2},
         caracteres : {cadena : /^[A-ZñÑa-z ]*$/},
         alfanumerico : {cadena: /^[0-9A-ZñÑa-z ]*$/},
         coordenada : {cadena: /^\-?[0-9]{2}\.[0-9]{3,15}/,tipo:0},
