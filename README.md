@@ -31,16 +31,16 @@ JidaControl.js es un plugin que permite fijar mascaras de control a los campos d
 
 ## Mascaras disponibles por defecto
 
-	* **cedula** : Validacion de Cedular o Rif en formato venezolano
-	* **miles** : Validacion númerica son separador de miles, se puede agregar un atributo data-decimal="numeroDecimales"
-	* **caracteres** : Solo caracteres
-	* **Alfanumerico**: Numeros y letras
+* **cedula** : Validacion de Cedular o Rif en formato venezolano
+* **miles** : Validacion númerica son separador de miles, se puede agregar un atributo data-decimal="numeroDecimales"
+* **caracteres** : Solo caracteres
+* **Alfanumerico**: Numeros y letras
 
 
 Las validaciones deben ser agregadas en los controles del formulario por medio del atributo *data-jidacontrol* y pueden ser agregadas cuantas se deseen
 por medio del arreglo **json validaciones**.
 
 El Plugin hace uso de tres metodos para el manejo de las mascaras:
-* **Controlador** : Ejecuta la expresión solicitada sobre el valor completo del control
+* **controlador** : Ejecuta la expresión solicitada sobre el valor completo del control
 * **controladorCaracter**: Ejecuta la expresion solicitada sobre cada tecla presionada, dicho en otras palabras solo evalua la tecla presionada en el momento.
 * **controladorDecimal** : Usado para validar campos con separador de miles y decimales
