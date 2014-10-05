@@ -161,8 +161,8 @@ jd.controladorInput.prototype={
         var numeroFormateado = "";
         var decimales = false;
         
-        if(key==8 || key==9 || e.keyCode==9 || key==37 || key==38 || key==39 || key==40 || e.keyCode==222|| key==222) 
-            //e.keyCode==37 || e.keyCode==38 || e.keyCode==39 || e.keyCode==40 || e.keyCode==46 
+        if(key==8 || key==9 || e.keyCode==9 || key==37 || key==38 || key==39 || key==40 || e.keyCode==222|| key==222)// || 
+            //e.keyCode==37 || e.keyCode==38 || e.keyCode==39 || e.keyCode==40 || e.keyCode==46) 
             return true;
         if(key==17) isCtrl=true;
         if(isCtrl==true &&(key==37 || key==39 || key==46 || key==161 || key==225 || key==17 || key==18)){
@@ -179,22 +179,7 @@ jd.controladorInput.prototype={
             }else{
                 decimal = (typeof(decimal)=="undefined")?0:decimal;
             
-                numeroFormateado = formatearValor();
-                obj.val(numeroFormateado);
-                obj.off('blur');
-                obj.on('blur',function(){
-                    valor = $( this).val();
-                    if(valor.substr(valor.length-1)==","){
-                        $(this ).val(valor.substr(0,valor.length-1));
-                    }
-                });
-                e.preventDefault(); 
-                    
-            }
-        }
-        function formatearValor(numeroSinFormato){
-            if(!numeroSinFormato)
-            contadorParaPunto=3;
+                contadorParaPunto=3;
                 if(numeroSinFormato.indexOf(",")>=0){    
                     //eliminar coma de decimales si existe
                     decimales = numeroSinFormato.substr(numeroSinFormato.indexOf(",")+1);
@@ -214,7 +199,88 @@ jd.controladorInput.prototype={
                 if(decimales){
                     numeroFormateado +=decimales;
                 }
+                obj.val(numeroFormateado);
+                obj.off('blur');
+                obj.on('blur',function(){
+                    valor = $( this).val();
+                    if(valor.substr(valor.length-1)==","){
+                        $(this ).val(valor.substr(0,valor.length-1));
+                    }
+                });
+                e.preventDefault(); 
+                    
+            }
         }
+    },
+    
+    controladorDecimalOld:function(e){
+        
+        tecla = String.fromCharCode(e.which);
+        key = e.which;
+        isCtrl=false;
+        if(e.which==8 || e.which==9 || e.keyCode==9 || e.which==37 || e.which==38 || e.which==39 || e.which==40 || e.keyCode==222
+            || e.which==222
+            ) return true;
+        if(key==17) isCtrl=true;
+        
+        if(isCtrl==true &&(key==37 || key==39 || key==46 || key==161 || key==225 || key==17 || key==18)){
+            e.preventDefault();
+    
+        }else{
+            //-------------------------
+            
+            patron=e.data.validacion;
+            if(!patron.test(tecla)){
+                e.preventDefault();
+            }else{
+                //Definir cantidad de decimales
+                
+                decimal = $(this).data('decimal');
+                decimal = (typeof(decimal)=="undefined")?0:decimal;
+                elemento = $(this);
+                //obtener valor del elemento con formato
+                valorNumero = elemento.val();
+                tamValorNumero = valorNumero.length+1;
+                
+                if(tamValorNumero>=decimal+1){
+                    //eliminar formato de miles al value
+                    numeroSinFormato=replaceAll(valorNumero,'.');
+                    if(valorNumero.indexOf(",")>=0)
+                    //eliminar coma de decimales si existe
+                        numeroSinFormato=valorNumero.replace(",",'');
+                    numeroSinFormato=numeroSinFormato+tecla;
+                    
+                    numA = numeroSinFormato.substr(numeroSinFormato.length - decimal);
+                    
+                    //volver a validar el formato y eliminarlo
+                    numSinPunto = replaceAll(numeroSinFormato.substr(0,numeroSinFormato.length - decimal),'.');
+                    //agregar el numero seleccionado para la validacion
+                    numSinPunto = numSinPunto;
+                    
+                    numB="";
+                    i=1;
+                    //----------------------
+                    while(numSinPunto.length>3){
+                        numB="."+numSinPunto.substr(numSinPunto.length-3) + numB;
+                        numSinPunto=numSinPunto.substring(0, numSinPunto.length - 3);
+                        
+                    }//fin while
+                    //----------------------
+                    numB = numSinPunto+numB;
+                    if(decimal>0){
+                        
+                        numeroFinal=numB+","+numA;
+                    }else
+                        numeroFinal = numB;
+                    elemento.val(numeroFinal);
+                    e.preventDefault();
+                }//fin mayor a 3 sin decimales
+                else{
+                //	console.log("nosilve");
+            	}
+            }//fin if validacion cadena
+            //-------------------------
+        }//final if...else
     },
     /**
      * Controlador  por caracteres
