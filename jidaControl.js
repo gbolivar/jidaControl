@@ -161,8 +161,8 @@ jd.controladorInput.prototype={
         var numeroFormateado = "";
         var decimales = false;
         
-        if(key==8 || key==9 || e.keyCode==9 || key==37 || key==38 || key==39 || key==40 || e.keyCode==222|| key==222 || 
-            e.keyCode==37 || e.keyCode==38 || e.keyCode==39 || e.keyCode==40 || e.keyCode==46) 
+        if(key==8 || key==9 || e.keyCode==9 || key==37 || key==38 || key==39 || key==40 || e.keyCode==222|| key==222) 
+            //e.keyCode==37 || e.keyCode==38 || e.keyCode==39 || e.keyCode==40 || e.keyCode==46 
             return true;
         if(key==17) isCtrl=true;
         if(isCtrl==true &&(key==37 || key==39 || key==46 || key==161 || key==225 || key==17 || key==18)){
